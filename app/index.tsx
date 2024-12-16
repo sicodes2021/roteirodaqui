@@ -1,10 +1,23 @@
-import { StyleSheet, Text, View, StatusBar, TextInput, Platform, Pressable, ScrollView } from "react-native";
+import { useState } from 'react'
+import { StyleSheet, Text, View, StatusBar, TextInput, Platform, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons'
 import Slider from "@react-native-community/slider";
 
 const statusBarHeight = StatusBar.currentHeight
 
 export default function Index() {
+
+  const [city, setCity] = useState("");
+  const [days, setDays] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [travel, setTravel] = useState("");
+
+  function handleGenerate() {
+    console.log(city)
+    console.log(days.toFixed(0))
+  }
+
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" translucent={true} backgroundColor="#F1F1F1" />
@@ -15,28 +28,41 @@ export default function Index() {
         <TextInput 
           placeholder="Ex: Brasília, DF"
           style={styles.input}
+          value={city}
+          onChangeText={ (text) => setCity(text)}
         />
 
-        <Text style={styles.label}>Tempo de estadia: <Text style={styles.days}> 10 </Text> dias</Text>
+        <Text style={styles.label}>Tempo de estadia: <Text style={styles.days}> {days.toFixed(0)} </Text> dias</Text>
 
         <Slider
           minimumValue={1}
           maximumValue={7}
           minimumTrackTintColor="#009688"
           maximumTrackTintColor="#000000"
+          value={days}
+          onValueChange={ (value) => setDays(value) }
         />
       </View>
 
-      <Pressable style={styles.button}>
+      <Pressable style={styles.button} onPress={handleGenerate}>
         <Text style={styles.buttonText}>Gerar Roteiro</Text>
         <MaterialIcons name="travel-explore" size={24} color="#FFF" />
       </Pressable>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24, marginTop: 4, }} style={styles.containerScroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Roteiro da viagem 😍</Text>
-          <Text>Aqui vai ser o roteiro completo...</Text>
-        </View>
+        {loading && (
+          <View style={styles.content}>
+            <Text style={styles.title}>Carregando roteiros...</Text>
+            <ActivityIndicator color="#000" size="large" />
+          </View>
+        )}
+
+        {travel && (
+          <View style={styles.content}>
+            <Text style={styles.title}>Roteiro da viagem 😍</Text>
+            <Text>{travel}</Text>
+          </View>
+        )}
       </ScrollView>
 
     </View>
